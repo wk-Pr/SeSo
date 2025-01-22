@@ -28,7 +28,6 @@ const wordsEasy = [
     { english: "Race", arabic: "سباق" },
 ];
 
-
 const wordsHard = [
     { english: "Many", arabic: "كثير" },
     { english: "Prepare", arabic: "يحضّر, يعدّ" },
@@ -40,7 +39,6 @@ const wordsHard = [
     { english: "Artist", arabic: "فنّان" },
     { english: "Interesting", arabic: "مثير للاهتمام" },
 ];
-
 
 let selected = [];
 let correctCount = 0;
@@ -67,9 +65,11 @@ function shuffle(array) {
 function createButtons(words) {
     const englishWords = words.map(w => ({ text: w.english, match: w.english }));
     const arabicWords = words.map(w => ({ text: w.arabic, match: w.english }));
+
+    // שילוב ושימוש יחיד במילים
     const allWords = shuffle([...englishWords, ...arabicWords]);
 
-    allWords.forEach(word => {
+    allWords.forEach((word, index) => {
         const button = document.createElement("button");
         button.textContent = word.text;
         button.style.fontWeight = "bold";
@@ -127,31 +127,7 @@ function checkMatch() {
 
 function endGame() {
     const message = `🎉 Congratulations! 🎉\n\nCorrect: ${correctCount}\nMistakes: ${mistakesCount}`;
-    const resultWindow = document.createElement("div");
-    resultWindow.style.position = "absolute";
-    resultWindow.style.top = "20%";
-    resultWindow.style.left = "50%";
-    resultWindow.style.transform = "translate(-50%, -20%)";
-    resultWindow.style.backgroundColor = "#fff";
-    resultWindow.style.border = "2px solid #000";
-    resultWindow.style.padding = "20px";
-    resultWindow.style.textAlign = "center";
-    resultWindow.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.5)";
-    resultWindow.innerHTML = `
-        <h2>SESO</h2>
-        <p>${message}</p>
-        <button onclick="takeScreenshot()">📷 Save Screenshot</button>
-    `;
-    document.body.appendChild(resultWindow);
-}
-
-function takeScreenshot() {
-    html2canvas(document.body).then(canvas => {
-        const link = document.createElement("a");
-        link.download = "game_result.png";
-        link.href = canvas.toDataURL();
-        link.click();
-    });
+    alert(message);
 }
 
 function startGame() {
