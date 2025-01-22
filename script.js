@@ -58,26 +58,27 @@ const restartButton = document.getElementById("restart");
 const increaseFontButton = document.createElement("button");
 const decreaseFontButton = document.createElement("button");
 
-// פונקציה לערבוב מילים
+// ערבוב המילים
 function shuffle(array) {
     return array.sort(() => Math.random() - 0.5);
 }
 
-// יצירת כפתורים למילים
+// יצירת הכפתורים
 function createButtons(words) {
     const shuffledWords = shuffle([...words, ...words]);
     shuffledWords.forEach((word, index) => {
         const button = document.createElement("button");
         button.textContent = index % 2 === 0 ? word.english : word.arabic;
-        button.style.fontWeight = "bold"; // הופך את הטקסט לבולד
-        button.style.fontSize = `${fontSize}px`; // מגדיר את גודל הגופן
+        button.style.fontWeight = "bold";
+        button.style.fontSize = `${fontSize}px`;
         button.dataset.match = word.english;
+        button.dataset.correct = "false"; // מעקב אחרי התאמה
         button.addEventListener("click", () => handleButtonClick(button));
         buttonsContainer.appendChild(button);
     });
 }
 
-// טיפול בבחירת לחצנים
+// טיפול בבחירת כפתור
 function handleButtonClick(button) {
     if (selected.length === 2) return;
 
@@ -89,13 +90,15 @@ function handleButtonClick(button) {
     }
 }
 
-// בדיקת התאמה בין זוגות
+// בדיקת התאמה
 function checkMatch() {
     const [btn1, btn2] = selected;
 
     if (btn1.dataset.match === btn2.dataset.match) {
         btn1.style.backgroundColor = colors[colorIndex];
         btn2.style.backgroundColor = colors[colorIndex];
+        btn1.dataset.correct = "true";
+        btn2.dataset.correct = "true";
         correctCount++;
         colorIndex = (colorIndex + 1) % colors.length;
     } else {
@@ -108,19 +111,17 @@ function checkMatch() {
     mistakesDisplay.textContent = mistakesCount;
 
     setTimeout(() => {
-        btn1.disabled = false;
-        btn2.disabled = false;
-        btn1.style.backgroundColor = "";
-        btn2.style.backgroundColor = "";
+        if (btn1.dataset.correct !== "true") btn1.style.backgroundColor = "";
+        if (btn2.dataset.correct !== "true") btn2.style.backgroundColor = "";
         selected = [];
 
         if (correctCount === wordsEasy.length) {
-            alert("Congratulations! 🎉 You finished the game!");
+            alert("🎉 Congratulations! You finished the game! 🎉");
         }
     }, 1000);
 }
 
-// התחלת משחק
+// התחלת המשחק
 function startGame() {
     resetGame();
     const difficulty = difficultySelect.value;
@@ -142,7 +143,7 @@ function resetGame() {
     colorIndex = 0;
 }
 
-// שינוי גודל הפונט
+// שינוי גודל טקסט
 function changeFontSize(increase) {
     fontSize += increase ? 2 : -2;
     const buttons = buttonsContainer.querySelectorAll("button");
@@ -151,7 +152,7 @@ function changeFontSize(increase) {
     });
 }
 
-// הוספת כפתורי שינוי גודל טקסט
+// כפתורי שינוי גודל
 increaseFontButton.textContent = "+";
 decreaseFontButton.textContent = "-";
 increaseFontButton.style.margin = "10px";
