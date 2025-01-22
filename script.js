@@ -28,6 +28,7 @@ const wordsEasy = [
     { english: "Race", arabic: "سباق" },
 ];
 
+
 const wordsHard = [
     { english: "Many", arabic: "كثير" },
     { english: "Prepare", arabic: "يحضّر, يعدّ" },
@@ -39,6 +40,7 @@ const wordsHard = [
     { english: "Artist", arabic: "فنّان" },
     { english: "Interesting", arabic: "مثير للاهتمام" },
 ];
+
 
 let selected = [];
 let correctCount = 0;
@@ -58,27 +60,27 @@ const restartButton = document.getElementById("restart");
 const increaseFontButton = document.createElement("button");
 const decreaseFontButton = document.createElement("button");
 
-// ערבוב המילים
 function shuffle(array) {
     return array.sort(() => Math.random() - 0.5);
 }
 
-// יצירת הכפתורים
 function createButtons(words) {
-    const shuffledWords = shuffle([...words, ...words]);
-    shuffledWords.forEach((word, index) => {
+    const englishWords = words.map(w => ({ text: w.english, match: w.english }));
+    const arabicWords = words.map(w => ({ text: w.arabic, match: w.english }));
+    const allWords = shuffle([...englishWords, ...arabicWords]);
+
+    allWords.forEach(word => {
         const button = document.createElement("button");
-        button.textContent = index % 2 === 0 ? word.english : word.arabic;
+        button.textContent = word.text;
         button.style.fontWeight = "bold";
         button.style.fontSize = `${fontSize}px`;
-        button.dataset.match = word.english;
-        button.dataset.correct = "false"; // מעקב אחרי התאמה
+        button.dataset.match = word.match;
+        button.dataset.correct = "false";
         button.addEventListener("click", () => handleButtonClick(button));
         buttonsContainer.appendChild(button);
     });
 }
 
-// טיפול בבחירת כפתור
 function handleButtonClick(button) {
     if (selected.length === 2) return;
 
@@ -90,13 +92,13 @@ function handleButtonClick(button) {
     }
 }
 
-// בדיקת התאמה
 function checkMatch() {
     const [btn1, btn2] = selected;
 
     if (btn1.dataset.match === btn2.dataset.match) {
-        btn1.style.backgroundColor = colors[colorIndex];
-        btn2.style.backgroundColor = colors[colorIndex];
+        const color = colors[colorIndex];
+        btn1.style.backgroundColor = color;
+        btn2.style.backgroundColor = color;
         btn1.dataset.correct = "true";
         btn2.dataset.correct = "true";
         correctCount++;
@@ -104,24 +106,54 @@ function checkMatch() {
     } else {
         btn1.style.backgroundColor = "red";
         btn2.style.backgroundColor = "red";
+        setTimeout(() => {
+            btn1.style.backgroundColor = "";
+            btn2.style.backgroundColor = "";
+            btn1.disabled = false;
+            btn2.disabled = false;
+        }, 1000);
         mistakesCount++;
     }
 
     correctDisplay.textContent = correctCount;
     mistakesDisplay.textContent = mistakesCount;
 
-    setTimeout(() => {
-        if (btn1.dataset.correct !== "true") btn1.style.backgroundColor = "";
-        if (btn2.dataset.correct !== "true") btn2.style.backgroundColor = "";
-        selected = [];
+    selected = [];
 
-        if (correctCount === wordsEasy.length) {
-            alert("🎉 Congratulations! You finished the game! 🎉");
-        }
-    }, 1000);
+    if (correctCount === wordsEasy.length) {
+        endGame();
+    }
 }
 
-// התחלת המשחק
+function endGame() {
+    const message = `🎉 Congratulations! 🎉\n\nCorrect: ${correctCount}\nMistakes: ${mistakesCount}`;
+    const resultWindow = document.createElement("div");
+    resultWindow.style.position = "absolute";
+    resultWindow.style.top = "20%";
+    resultWindow.style.left = "50%";
+    resultWindow.style.transform = "translate(-50%, -20%)";
+    resultWindow.style.backgroundColor = "#fff";
+    resultWindow.style.border = "2px solid #000";
+    resultWindow.style.padding = "20px";
+    resultWindow.style.textAlign = "center";
+    resultWindow.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.5)";
+    resultWindow.innerHTML = `
+        <h2>SESO</h2>
+        <p>${message}</p>
+        <button onclick="takeScreenshot()">📷 Save Screenshot</button>
+    `;
+    document.body.appendChild(resultWindow);
+}
+
+function takeScreenshot() {
+    html2canvas(document.body).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "game_result.png";
+        link.href = canvas.toDataURL();
+        link.click();
+    });
+}
+
 function startGame() {
     resetGame();
     const difficulty = difficultySelect.value;
@@ -133,7 +165,6 @@ function startGame() {
     createButtons(words);
 }
 
-// איפוס המשחק
 function resetGame() {
     buttonsContainer.innerHTML = "";
     correctCount = 0;
@@ -143,16 +174,7 @@ function resetGame() {
     colorIndex = 0;
 }
 
-// שינוי גודל טקסט
-function changeFontSize(increase) {
-    fontSize += increase ? 2 : -2;
-    const buttons = buttonsContainer.querySelectorAll("button");
-    buttons.forEach(button => {
-        button.style.fontSize = `${fontSize}px`;
-    });
-}
-
-// כפתורי שינוי גודל
+// כפתורי שינוי גודל טקסט
 increaseFontButton.textContent = "+";
 decreaseFontButton.textContent = "-";
 increaseFontButton.style.margin = "10px";
@@ -162,6 +184,14 @@ decreaseFontButton.addEventListener("click", () => changeFontSize(false));
 
 gameContainer.appendChild(increaseFontButton);
 gameContainer.appendChild(decreaseFontButton);
+
+function changeFontSize(increase) {
+    fontSize += increase ? 2 : -2;
+    const buttons = buttonsContainer.querySelectorAll("button");
+    buttons.forEach(button => {
+        button.style.fontSize = `${fontSize}px`;
+    });
+}
 
 startButton.addEventListener("click", startGame);
 restartButton.addEventListener("click", resetGame);
