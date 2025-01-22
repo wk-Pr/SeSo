@@ -44,7 +44,8 @@ let selected = [];
 let correctCount = 0;
 let mistakesCount = 0;
 let colorIndex = 0;
-const colors = ["color-1", "color-2", "color-3", "color-4"];
+let fontSize = 16;
+const colors = ["#4CAF50", "#FF9800", "#2196F3", "#9C27B0"];
 
 const menu = document.getElementById("menu");
 const gameContainer = document.getElementById("game-container");
@@ -54,22 +55,29 @@ const mistakesDisplay = document.getElementById("mistakes");
 const difficultySelect = document.getElementById("difficulty");
 const startButton = document.getElementById("start-game");
 const restartButton = document.getElementById("restart");
+const increaseFontButton = document.createElement("button");
+const decreaseFontButton = document.createElement("button");
 
+// פונקציה לערבוב מילים
 function shuffle(array) {
     return array.sort(() => Math.random() - 0.5);
 }
 
+// יצירת כפתורים למילים
 function createButtons(words) {
     const shuffledWords = shuffle([...words, ...words]);
     shuffledWords.forEach((word, index) => {
         const button = document.createElement("button");
         button.textContent = index % 2 === 0 ? word.english : word.arabic;
+        button.style.fontWeight = "bold"; // הופך את הטקסט לבולד
+        button.style.fontSize = `${fontSize}px`; // מגדיר את גודל הגופן
         button.dataset.match = word.english;
         button.addEventListener("click", () => handleButtonClick(button));
         buttonsContainer.appendChild(button);
     });
 }
 
+// טיפול בבחירת לחצנים
 function handleButtonClick(button) {
     if (selected.length === 2) return;
 
@@ -81,17 +89,18 @@ function handleButtonClick(button) {
     }
 }
 
+// בדיקת התאמה בין זוגות
 function checkMatch() {
     const [btn1, btn2] = selected;
 
     if (btn1.dataset.match === btn2.dataset.match) {
-        btn1.classList.add("correct", colors[colorIndex]);
-        btn2.classList.add("correct", colors[colorIndex]);
+        btn1.style.backgroundColor = colors[colorIndex];
+        btn2.style.backgroundColor = colors[colorIndex];
         correctCount++;
         colorIndex = (colorIndex + 1) % colors.length;
     } else {
-        btn1.classList.add("wrong");
-        btn2.classList.add("wrong");
+        btn1.style.backgroundColor = "red";
+        btn2.style.backgroundColor = "red";
         mistakesCount++;
     }
 
@@ -101,8 +110,8 @@ function checkMatch() {
     setTimeout(() => {
         btn1.disabled = false;
         btn2.disabled = false;
-        btn1.classList.remove("wrong");
-        btn2.classList.remove("wrong");
+        btn1.style.backgroundColor = "";
+        btn2.style.backgroundColor = "";
         selected = [];
 
         if (correctCount === wordsEasy.length) {
@@ -111,6 +120,7 @@ function checkMatch() {
     }, 1000);
 }
 
+// התחלת משחק
 function startGame() {
     resetGame();
     const difficulty = difficultySelect.value;
@@ -122,6 +132,7 @@ function startGame() {
     createButtons(words);
 }
 
+// איפוס המשחק
 function resetGame() {
     buttonsContainer.innerHTML = "";
     correctCount = 0;
@@ -130,6 +141,26 @@ function resetGame() {
     mistakesDisplay.textContent = mistakesCount;
     colorIndex = 0;
 }
+
+// שינוי גודל הפונט
+function changeFontSize(increase) {
+    fontSize += increase ? 2 : -2;
+    const buttons = buttonsContainer.querySelectorAll("button");
+    buttons.forEach(button => {
+        button.style.fontSize = `${fontSize}px`;
+    });
+}
+
+// הוספת כפתורי שינוי גודל טקסט
+increaseFontButton.textContent = "+";
+decreaseFontButton.textContent = "-";
+increaseFontButton.style.margin = "10px";
+decreaseFontButton.style.margin = "10px";
+increaseFontButton.addEventListener("click", () => changeFontSize(true));
+decreaseFontButton.addEventListener("click", () => changeFontSize(false));
+
+gameContainer.appendChild(increaseFontButton);
+gameContainer.appendChild(decreaseFontButton);
 
 startButton.addEventListener("click", startGame);
 restartButton.addEventListener("click", resetGame);
