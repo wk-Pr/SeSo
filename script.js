@@ -43,6 +43,8 @@ const wordsHard = [
 let selected = [];
 let correctCount = 0;
 let mistakesCount = 0;
+let colorIndex = 0;
+const colors = ["color-1", "color-2", "color-3", "color-4"];
 
 const menu = document.getElementById("menu");
 const gameContainer = document.getElementById("game-container");
@@ -51,6 +53,7 @@ const correctDisplay = document.getElementById("correct");
 const mistakesDisplay = document.getElementById("mistakes");
 const difficultySelect = document.getElementById("difficulty");
 const startButton = document.getElementById("start-game");
+const restartButton = document.getElementById("restart");
 
 function shuffle(array) {
     return array.sort(() => Math.random() - 0.5);
@@ -82,9 +85,10 @@ function checkMatch() {
     const [btn1, btn2] = selected;
 
     if (btn1.dataset.match === btn2.dataset.match) {
-        btn1.classList.add("correct");
-        btn2.classList.add("correct");
+        btn1.classList.add("correct", colors[colorIndex]);
+        btn2.classList.add("correct", colors[colorIndex]);
         correctCount++;
+        colorIndex = (colorIndex + 1) % colors.length;
     } else {
         btn1.classList.add("wrong");
         btn2.classList.add("wrong");
@@ -108,6 +112,7 @@ function checkMatch() {
 }
 
 function startGame() {
+    resetGame();
     const difficulty = difficultySelect.value;
     const words = difficulty === "easy" ? wordsEasy : wordsHard;
 
@@ -117,4 +122,14 @@ function startGame() {
     createButtons(words);
 }
 
+function resetGame() {
+    buttonsContainer.innerHTML = "";
+    correctCount = 0;
+    mistakesCount = 0;
+    correctDisplay.textContent = correctCount;
+    mistakesDisplay.textContent = mistakesCount;
+    colorIndex = 0;
+}
+
 startButton.addEventListener("click", startGame);
+restartButton.addEventListener("click", resetGame);
