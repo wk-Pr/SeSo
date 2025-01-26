@@ -75,6 +75,7 @@ function resetGame() {
     elements.gameArea.innerHTML = "";
 }
 
+
 function updateDescription() {
     const gameMode = document.getElementById("game-mode").value;
     const descriptions = {
@@ -91,23 +92,32 @@ function updateDescription() {
 function startMatchingGame() {
     const difficulty = document.getElementById("difficulty").value;
     const words = difficulty === "easy" ? wordsEasy : wordsHard;
+
+    // Create shuffled array of words (English and Arabic pairs)
+    const mixedWords = shuffle(
+        [...words.map(w => ({ text: w.english, match: w.english })), 
+         ...words.map(w => ({ text: w.arabic, match: w.english }))]
+    );
+
     elements.gameArea.innerHTML = "";
-    const shuffledWords = [...words, ...words].sort(() => Math.random() - 0.5);
-    shuffledWords.forEach((word) => {
+
+    mixedWords.forEach(word => {
         const button = document.createElement("button");
-        button.textContent = word.english || word.arabic;
-        button.dataset.match = word.english;
+        button.textContent = word.text;
+        button.dataset.match = word.match;
         button.addEventListener("click", () => handleMatchClick(button));
         elements.gameArea.appendChild(button);
     });
 }
-
 function handleMatchClick(button) {
     if (selectedButtons.length === 2) return;
+
     button.disabled = true;
     selectedButtons.push(button);
+
     if (selectedButtons.length === 2) {
         const [btn1, btn2] = selectedButtons;
+
         if (btn1.dataset.match === btn2.dataset.match) {
             correctCount++;
             btn1.classList.add("correct");
@@ -116,6 +126,7 @@ function handleMatchClick(button) {
             mistakesCount++;
             btn1.classList.add("wrong");
             btn2.classList.add("wrong");
+
             setTimeout(() => {
                 btn1.classList.remove("wrong");
                 btn2.classList.remove("wrong");
@@ -127,7 +138,6 @@ function handleMatchClick(button) {
         updateScore();
     }
 }
-
 function startSayTheWordGame() {
     const word = getRandomWord();
     elements.gameArea.innerHTML = `<p class="game-word">Say this word: <strong>${word.english}</strong></p>`;
@@ -165,6 +175,33 @@ function startBuildTheSentenceGame() {
     elements.gameArea.innerHTML = `<p class="game-word">Arrange these words: <strong>${shuffled.join(" ")}</strong></p>`;
 }
 
+function startSpeechGame() {
+    const word = getRandomWord();
+
+    elements.gameArea.innerHTML = `<p class="game-word">Say this word: <strong>${word.english}</strong></p>`;
+
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = "en-US"; // Ensure English recognition
+    recognition.start();
+
+    recognition.onresult = (event) => {
+        const userSpeech = event.results[0][0].transcript.toLowerCase();
+        if (userSpeech === word.english.toLowerCase()) {
+            correctCount++;
+            alert("Correct!");
+        } else {
+            mistakesCount++;
+            alert(`Incorrect! The correct word was "${word.english}".`);
+        }
+        updateScore();
+    };
+
+    recognition.onerror = () => {
+        alert("Error with microphone. Please try again.");
+    };
+}
+
+
 function shuffle(array) {
     return array.sort(() => Math.random() - 0.5);
 }
@@ -180,6 +217,7 @@ function updateScore() {
     elements.correctDisplay.textContent = correctCount;
     elements.mistakesDisplay.textContent = mistakesCount;
     elements.scoreDisplay.textContent = score;
+
     const timeTaken = Math.floor((new Date() - startTime) / 1000);
     elements.timeDisplay.textContent = timeTaken;
 }

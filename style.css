@@ -42,21 +42,7 @@ footer {
     display: none;
 }
 
-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    margin: 5px;
-    cursor: pointer;
-    background-color: #4CAF50;
-    color: white;
-    transition: background-color 0.3s;
-}
 
-button:hover {
-    background-color: #45a049;
-}
 
 #game-description {
     margin-top: 10px;
@@ -83,12 +69,35 @@ button:hover {
     color: #4CAF50;
 }
 
-button.correct {
-    background-color: #4CAF50 !important;
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    margin: 5px;
+    cursor: pointer;
+    background-color: #4CAF50;
     color: white;
 }
 
+button.correct {
+    background-color: #28a745;
+}
+
 button.wrong {
-    background-color: red !important;
-    color: white;
+    background-color: #dc3545;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+@media screen and (max-width: 600px) {
+    button {
+        font-size: 14px;
+        padding: 8px 15px;
+    }
+
+    .game-word {
+        font-size: 18px;
+    }
 }
