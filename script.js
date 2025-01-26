@@ -155,7 +155,8 @@ function startSayTheWordGame() {
     const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
     const word = getRandomWord();
 
-    alert(`Say the word: ${word.english}`);
+    elements.gameArea.innerHTML = `<p class="game-word">Say this word: <strong>${word.english}</strong></p>`;
+
     recognition.start();
 
     recognition.onresult = (event) => {
@@ -171,18 +172,24 @@ function startSayTheWordGame() {
     };
 }
 
+
 function startRepeatAfterMeGame() {
     const word = getRandomWord();
+
+    elements.gameArea.innerHTML = `<p class="game-word">Repeat after me: <strong>${word.english}</strong></p>`;
+
     const utterance = new SpeechSynthesisUtterance(word.english);
-    utterance.onend = () => startSayTheWordGame();
     speechSynthesis.speak(utterance);
 }
 
+
 function startFillInTheBlankGame() {
     const word = getRandomWord();
-    const missing = word.english.replace(/[a-zA-Z]/g, "_");
-    const userInput = prompt(`Complete the word: ${missing}`);
+    const missing = word.english.replace(/./g, (char, index) => (index % 2 === 0 ? char : "_"));
 
+    elements.gameArea.innerHTML = `<p class="game-word">Complete the word: <strong>${missing}</strong></p>`;
+
+    const userInput = prompt(`Complete the word: ${missing}`);
     if (userInput === word.english) {
         correctCount++;
         alert("Correct!");
@@ -193,11 +200,14 @@ function startFillInTheBlankGame() {
     updateScore();
 }
 
+
 function startBuildTheSentenceGame() {
     const sentence = "I like apples";
     const shuffled = shuffle(sentence.split(" "));
-    const userAnswer = prompt(`Build the sentence: ${shuffled.join(" ")}`);
 
+    elements.gameArea.innerHTML = `<p class="game-word">Arrange these words: <strong>${shuffled.join(" ")}</strong></p>`;
+
+    const userAnswer = prompt(`Build the sentence: ${shuffled.join(" ")}`);
     if (userAnswer === sentence) {
         correctCount++;
         alert("Correct!");
@@ -208,9 +218,26 @@ function startBuildTheSentenceGame() {
     updateScore();
 }
 
+
 function shuffle(array) {
     return array.sort(() => Math.random() - 0.5);
 }
+
+function updateDescription() {
+    const gameMode = document.getElementById("game-mode").value;
+    const descriptionElement = document.getElementById("game-description");
+
+    const descriptions = {
+        "matching": "Match English and Arabic words to improve vocabulary. (طابق الكلمات بالإنجليزية والعربية لتحسين المفردات)",
+        "say-the-word": "Practice pronunciation by saying the word aloud. (تمرن على النطق بقول الكلمة بصوت عالٍ)",
+        "repeat-after-me": "Follow and repeat the words spoken by the game. (كرر الكلمات التي يتم نطقها بواسطة اللعبة)",
+        "fill-in-the-blank": "Complete the missing letters in the word. (أكمل الأحرف المفقودة في الكلمة)",
+        "build-the-sentence": "Arrange words to form a correct sentence. (رتب الكلمات لتكوين جملة صحيحة)"
+    };
+
+    descriptionElement.textContent = descriptions[gameMode] || "Select a game mode to see its description.";
+}
+
 
 function getRandomWord() {
     const difficulty = document.getElementById("difficulty").value;

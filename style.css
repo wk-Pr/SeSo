@@ -100,6 +100,14 @@ button:hover {
     display: none;
 }
 
+.game-word {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin: 20px 0;
+    text-align: center;
+}
+
 #game-area {
     display: flex;
     flex-wrap: wrap;
