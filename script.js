@@ -46,6 +46,7 @@ let score = 0;
 let colorIndex = 0; // To cycle through colors for correct pairs
 let startTime = null;
 let currentDifficulty = "easy";
+let leaderboard = []; // Array to store leaderboard data
 
 const colors = ["#4CAF50", "#FF9800", "#2196F3", "#9C27B0"];
 
@@ -122,11 +123,17 @@ function checkMatch() {
 
 function endGame() {
     const endTime = new Date();
-    const totalTime = Math.floor((endTime - startTime) / 1000);
+    const totalTime = Math.floor((endTime - startTime) / 1000); // Time in seconds
 
+    // Add the player's performance to the leaderboard
+    leaderboard.push({ score, time: totalTime, mistakes: mistakesCount });
+    leaderboard.sort((a, b) => b.score - a.score || a.time - b.time); // Sort by score, then time
+
+    // Display a message and show the leaderboard
     alert(`🎉 Well Done! Score: ${score}, Mistakes: ${mistakesCount}, Time Taken: ${totalTime} seconds`);
-    exitToMenu();
+    showLeaderboard();
 }
+
 
 function startGame() {
     resetGame();
@@ -140,6 +147,26 @@ function startGame() {
     elements.gameContainer.classList.remove("hidden");
 
     createButtons(words);
+}
+
+function showLeaderboard() {
+    elements.gameContainer.classList.add("hidden");
+    const leaderboardBody = document.getElementById("leaderboard-body");
+    leaderboardBody.innerHTML = ""; // Clear the table
+
+    // Populate the leaderboard table
+    leaderboard.forEach((entry, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${entry.score}</td>
+            <td>${entry.time}</td>
+            <td>${entry.mistakes}</td>
+        `;
+        leaderboardBody.appendChild(row);
+    });
+
+    document.getElementById("leaderboard").classList.remove("hidden");
 }
 
 function resetGame() {
@@ -174,6 +201,7 @@ function createButtons(words) {
 
 function exitToMenu() {
     elements.gameContainer.classList.add("hidden");
+    document.getElementById("leaderboard").classList.add("hidden");
     elements.menu.classList.remove("hidden");
     resetGame();
 }
@@ -182,3 +210,4 @@ function exitToMenu() {
 elements.startButton.addEventListener("click", startGame);
 elements.restartButton.addEventListener("click", startGame);
 elements.exitButton.addEventListener("click", exitToMenu);
+document.getElementById("back-to-menu").addEventListener("click", exitToMenu);

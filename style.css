@@ -104,3 +104,30 @@ button.wrong {
     from { opacity: 1; }
     to { opacity: 0; }
 }
+
+#leaderboard {
+    margin: 20px auto;
+    max-width: 600px;
+}
+
+#leaderboard table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+#leaderboard th, #leaderboard td {
+    border: 1px solid #333;
+    padding: 10px;
+    text-align: center;
+}
+
+#leaderboard th {
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+}
+
+.hidden {
+    display: none;
+}
