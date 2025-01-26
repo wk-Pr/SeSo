@@ -62,20 +62,7 @@ function shuffle(array) {
     return array.sort(() => Math.random() - 0.5);
 }
 
-function createButtons(words) {
-    const mixedWords = shuffle(
-        [...words.map(w => ({ text: w.english, match: w.english })), 
-        ...words.map(w => ({ text: w.arabic, match: w.english }))]
-    );
 
-    mixedWords.forEach(word => {
-        const button = document.createElement("button");
-        button.textContent = word.text;
-        button.dataset.match = word.match;
-        button.addEventListener("click", () => handleButtonClick(button));
-        elements.buttonsContainer.appendChild(button);
-    });
-}
 
 function handleButtonClick(button) {
     if (selected.length === 2) return;
@@ -111,36 +98,68 @@ function checkMatch() {
 
     selected = [];
 
-    if (correctCount === (currentDifficulty === "easy" ? wordsEasy.length : wordsHard.length)) {
-        endGame();
+    const totalWords = currentDifficulty === "easy" ? wordsEasy.length : wordsHard.length;
+
+    if (correctCount === totalWords) {
+        setTimeout(() => endGame(), 500); // Delay the endGame call to allow the last match animation
     }
 }
 
 function endGame() {
     alert(`🎉 Well Done! Correct: ${correctCount}, Mistakes: ${mistakesCount}`);
+    exitToMenu(); // Return to menu after showing the message
 }
 
 function startGame() {
-    currentDifficulty = elements.difficultySelect.value;
+    // Reset the game before starting a new one
     resetGame();
+
+    // Get the current difficulty level
+    currentDifficulty = elements.difficultySelect.value;
     const words = currentDifficulty === "easy" ? wordsEasy : wordsHard;
 
+    // Hide the menu and show the game container
     elements.menu.classList.add("hidden");
     elements.gameContainer.classList.remove("hidden");
 
+    // Create buttons for the game
     createButtons(words);
 }
 
 function resetGame() {
+    // Clear the buttons container before creating new buttons
     elements.buttonsContainer.innerHTML = "";
     correctCount = 0;
     mistakesCount = 0;
     colorIndex = 0;
+
+    // Reset the score display
     elements.correctDisplay.textContent = "0";
     elements.mistakesDisplay.textContent = "0";
 
+    // Generate buttons based on the current difficulty level
     const words = currentDifficulty === "easy" ? wordsEasy : wordsHard;
     createButtons(words);
+}
+
+function createButtons(words) {
+    // Clear the container to prevent duplicate buttons
+    elements.buttonsContainer.innerHTML = "";
+
+    // Shuffle the words and generate buttons
+    const mixedWords = shuffle(
+        [...words.map(w => ({ text: w.english, match: w.english })), 
+        ...words.map(w => ({ text: w.arabic, match: w.english }))],
+    );
+
+    // Add buttons to the container
+    mixedWords.forEach(word => {
+        const button = document.createElement("button");
+        button.textContent = word.text;
+        button.dataset.match = word.match;
+        button.addEventListener("click", () => handleButtonClick(button));
+        elements.buttonsContainer.appendChild(button);
+    });
 }
 
 function exitToMenu() {
@@ -149,6 +168,7 @@ function exitToMenu() {
     resetGame();
 }
 
+// Event listeners
 elements.startButton.addEventListener("click", startGame);
 elements.restartButton.addEventListener("click", resetGame);
 elements.exitButton.addEventListener("click", exitToMenu);
