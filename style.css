@@ -1,29 +1,23 @@
-/* בסיס העיצוב */
+/* בסיס עיצוב */
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+    background-color: #f9f9f9;
 }
 
 header {
     background-color: #4CAF50;
     color: white;
-    padding: 20px 0;
     text-align: center;
+    padding: 20px 0;
     font-size: 24px;
     font-weight: bold;
 }
 
 main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     padding: 20px;
+    text-align: center;
 }
 
 footer {
@@ -31,73 +25,45 @@ footer {
     color: white;
     text-align: center;
     padding: 10px;
-}
-
-/* עיצוב התפריט */
-#menu {
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 90%;
-    max-width: 500px;
-    text-align: center;
-}
-
-h2 {
-    font-size: 22px;
-    color: #333;
-}
-
-.menu-options {
-    margin-bottom: 20px;
-}
-
-label {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 5px;
-}
-
-select {
-    padding: 10px;
-    font-size: 16px;
-    border: 2px solid #ccc;
-    border-radius: 5px;
+    position: fixed;
     width: 100%;
-    margin-bottom: 10px;
+    bottom: 0;
 }
 
-/* כפתורים */
-button {
-    padding: 15px 30px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-button:hover {
-    background-color: #3e8e41;
-    color: white;
-}
-
-.main-button {
-    background-color: #4CAF50;
-    color: white;
-    margin-top: 10px;
-}
-
-/* אזור המשחק */
-#game-container {
-    width: 90%;
+#menu, #game-container {
+    margin: 20px auto;
     max-width: 600px;
-    margin-top: 20px;
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .hidden {
     display: none;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    margin: 5px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+#game-description {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #555;
+    text-align: center;
 }
 
 .game-word {
@@ -105,28 +71,15 @@ button:hover {
     font-weight: bold;
     color: #333;
     margin: 20px 0;
-    text-align: center;
-}
-
-#game-area {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-#score {
-    text-align: left;
 }
 
 #score p {
     margin: 5px 0;
     font-size: 18px;
+    color: #444;
 }
-#game-description {
-    margin-top: 10px;
-    font-size: 16px;
-    color: #555;
-    text-align: center;
+
+#score span {
+    font-weight: bold;
+    color: #4CAF50;
 }

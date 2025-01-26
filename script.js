@@ -40,11 +40,7 @@ const wordsHard = [
 ];
 
 let selected = [];
-let correctCount = 0;
-let mistakesCount = 0;
-let score = 0;
 let colorIndex = 0; // To cycle through colors for correct pairs
-let startTime = null;
 let currentDifficulty = "easy";
 let leaderboard = []; // Array to store leaderboard data
 let currentMode = null;
@@ -75,13 +71,14 @@ function resetGame() {
     score = 0;
     startTime = new Date();
 
-    elements.correctDisplay.textContent = correctCount;
-    elements.mistakesDisplay.textContent = mistakesCount;
-    elements.scoreDisplay.textContent = score;
+    elements.correctDisplay.textContent = "0";
+    elements.mistakesDisplay.textContent = "0";
+    elements.scoreDisplay.textContent = "0";
     elements.timeDisplay.textContent = "0";
 
     elements.gameArea.innerHTML = "";
 }
+
 
 function updateScore() {
     score = correctCount * 10 - mistakesCount * 5;
@@ -95,42 +92,23 @@ function updateScore() {
 
 function startGame() {
     resetGame();
-
     const gameMode = document.getElementById("game-mode").value;
-
-    if (!gameMode) {
-        alert("Please select a game mode.");
-        return;
-    }
 
     elements.menu.classList.add("hidden");
     elements.gameContainer.classList.remove("hidden");
 
-    switch (gameMode) {
-        case "matching":
-            startMatchingGame();
-            break;
-        case "say-the-word":
-            startSayTheWordGame();
-            break;
-        case "repeat-after-me":
-            startRepeatAfterMeGame();
-            break;
-        case "fill-in-the-blank":
-            startFillInTheBlankGame();
-            break;
-        case "build-the-sentence":
-            startBuildTheSentenceGame();
-            break;
-        default:
-            alert("Invalid game mode selected!");
-    }
+    if (gameMode === "matching") startMatchingGame();
+    else if (gameMode === "say-the-word") startSayTheWordGame();
+    else if (gameMode === "repeat-after-me") startRepeatAfterMeGame();
+    else if (gameMode === "fill-in-the-blank") startFillInTheBlankGame();
+    else if (gameMode === "build-the-sentence") startBuildTheSentenceGame();
 }
 
 
 function startMatchingGame() {
-    const difficulty = document.getElementById("difficulty").value;
-    const words = difficulty === "easy" ? wordsEasy : wordsHard;
+    const words = document.getElementById("difficulty").value === "easy" ? wordsEasy : wordsHard;
+    elements.gameArea.innerHTML = "<p class='game-word'>Match the words!</p>";
+
     const shuffledWords = shuffle([...words, ...words]);
 
     shuffledWords.forEach(word => {
@@ -246,18 +224,16 @@ function shuffle(array) {
 
 function updateDescription() {
     const gameMode = document.getElementById("game-mode").value;
-    const descriptionElement = document.getElementById("game-description");
-
     const descriptions = {
-        "matching": "Match English and Arabic words to improve vocabulary. (طابق الكلمات بالإنجليزية والعربية لتحسين المفردات)",
-        "say-the-word": "Practice pronunciation by saying the word aloud. (تمرن على النطق بقول الكلمة بصوت عالٍ)",
-        "repeat-after-me": "Follow and repeat the words spoken by the game. (كرر الكلمات التي يتم نطقها بواسطة اللعبة)",
-        "fill-in-the-blank": "Complete the missing letters in the word. (أكمل الأحرف المفقودة في الكلمة)",
-        "build-the-sentence": "Arrange words to form a correct sentence. (رتب الكلمات لتكوين جملة صحيحة)"
+        "matching": "Match English and Arabic words to improve vocabulary.",
+        "say-the-word": "Practice pronunciation by saying the word aloud.",
+        "repeat-after-me": "Follow and repeat the words spoken by the game.",
+        "fill-in-the-blank": "Complete the missing letters in the word.",
+        "build-the-sentence": "Arrange words to form a correct sentence."
     };
-
-    descriptionElement.innerHTML = `<p>${descriptions[gameMode]}</p>`;
+    document.getElementById("game-description").innerHTML = descriptions[gameMode] || "Select a game mode to see its description.";
 }
+
 
 
 
@@ -267,10 +243,8 @@ function getRandomWord() {
     return words[Math.floor(Math.random() * words.length)];
 }
 
-elements.startButton.addEventListener("click", () => {
-    startGame();
-});
-elements.restartButton.addEventListener("click", startGame);
+elements.startButton.addEventListener("click", startGame);
+elements.restartButton.addEventListener("click", resetGame);
 elements.exitButton.addEventListener("click", () => {
     elements.menu.classList.remove("hidden");
     elements.gameContainer.classList.add("hidden");

@@ -11,32 +11,31 @@
         <h1>Game & Learning Center</h1>
     </header>
     <main>
-<div id="menu">
-    <h2>Select a Game Mode</h2>
-    <p>Learn, play, and improve your English skills while having fun!</p>
-    <div class="menu-options">
-        <label for="game-mode">Game Mode:</label>
-        <select id="game-mode" onchange="updateDescription()">
-            <option value="matching">Matching Game</option>
-            <option value="say-the-word">Say the Word</option>
-            <option value="repeat-after-me">Repeat After Me</option>
-            <option value="fill-in-the-blank">Fill in the Blank</option>
-            <option value="build-the-sentence">Build the Sentence</option>
-        </select>
-        <div id="game-description">
-            <!--SHOW TITLE-->
-        </div>
-    </div>
-    <div class="menu-options">
-        <label for="difficulty">Difficulty:</label>
-        <select id="difficulty">
-            <option value="easy">Easy</option>
-            <option value="hard">Hard</option>
-        </select>
-    </div>
-    <button id="start-game" class="main-button">Start Game</button>
-</div>
-
+        <section id="menu">
+            <h2>Select a Game Mode</h2>
+            <p>Learn, play, and improve your English skills while having fun!</p>
+            <div class="menu-options">
+                <label for="game-mode">Game Mode:</label>
+                <select id="game-mode" onchange="updateDescription()">
+                    <option value="matching">Matching Game</option>
+                    <option value="say-the-word">Say the Word</option>
+                    <option value="repeat-after-me">Repeat After Me</option>
+                    <option value="fill-in-the-blank">Fill in the Blank</option>
+                    <option value="build-the-sentence">Build the Sentence</option>
+                </select>
+                <div id="game-description">
+                    <!-- Game description will appear here -->
+                </div>
+            </div>
+            <div class="menu-options">
+                <label for="difficulty">Difficulty:</label>
+                <select id="difficulty">
+                    <option value="easy">Easy</option>
+                    <option value="hard">Hard</option>
+                </select>
+            </div>
+            <button id="start-game" class="main-button">Start Game</button>
+        </section>
 
         <section id="game-container" class="hidden">
             <div id="game-area"></div>
@@ -51,7 +50,7 @@
         </section>
     </main>
     <footer>
-        <p>&copy; 2023 Game & Learning Center</p>
+        <p>&copy; 2023 WK-Game & Learning Center</p>
     </footer>
     <script src="script.js"></script>
 </body>
