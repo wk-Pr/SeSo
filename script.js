@@ -42,9 +42,12 @@ const wordsHard = [
 let selected = [];
 let correctCount = 0;
 let mistakesCount = 0;
+let score = 0;
 let colorIndex = 0;
-const colors = ["#4CAF50", "#FF9800", "#2196F3", "#9C27B0"];
+let startTime = null; // To track when the game started
 let currentDifficulty = "easy";
+
+const colors = ["#4CAF50", "#FF9800", "#2196F3", "#9C27B0"];
 
 const elements = {
     menu: document.getElementById("menu"),
@@ -52,6 +55,8 @@ const elements = {
     buttonsContainer: document.getElementById("buttons"),
     correctDisplay: document.getElementById("correct"),
     mistakesDisplay: document.getElementById("mistakes"),
+    scoreDisplay: document.getElementById("score"),
+    timeDisplay: document.getElementById("time"),
     difficultySelect: document.getElementById("difficulty"),
     startButton: document.getElementById("start-game"),
     restartButton: document.getElementById("restart"),
@@ -61,8 +66,6 @@ const elements = {
 function shuffle(array) {
     return array.sort(() => Math.random() - 0.5);
 }
-
-
 
 function handleButtonClick(button) {
     if (selected.length === 2) return;
@@ -78,10 +81,12 @@ function checkMatch() {
 
     if (btn1.dataset.match === btn2.dataset.match) {
         correctCount++;
+        score += selected.length === 2 && score > 0 ? 15 : 10;
         btn1.classList.add("correct");
         btn2.classList.add("correct");
     } else {
         mistakesCount++;
+        score -= 5;
         btn1.classList.add("wrong");
         btn2.classList.add("wrong");
 
@@ -95,64 +100,61 @@ function checkMatch() {
 
     elements.correctDisplay.textContent = correctCount;
     elements.mistakesDisplay.textContent = mistakesCount;
+    elements.scoreDisplay.textContent = score;
 
     selected = [];
 
     const totalWords = currentDifficulty === "easy" ? wordsEasy.length : wordsHard.length;
 
     if (correctCount === totalWords) {
-        setTimeout(() => endGame(), 500); // Delay the endGame call to allow the last match animation
+        setTimeout(endGame, 500);
     }
 }
 
 function endGame() {
-    alert(`🎉 Well Done! Correct: ${correctCount}, Mistakes: ${mistakesCount}`);
-    exitToMenu(); // Return to menu after showing the message
+    const endTime = new Date();
+    const totalTime = Math.floor((endTime - startTime) / 1000); // Time in seconds
+
+    alert(`🎉 Well Done! Score: ${score}, Mistakes: ${mistakesCount}, Time Taken: ${totalTime} seconds`);
+    exitToMenu();
 }
 
 function startGame() {
-    // Reset the game before starting a new one
     resetGame();
 
-    // Get the current difficulty level
+    // Record the start time
+    startTime = new Date();
+
     currentDifficulty = elements.difficultySelect.value;
     const words = currentDifficulty === "easy" ? wordsEasy : wordsHard;
 
-    // Hide the menu and show the game container
     elements.menu.classList.add("hidden");
     elements.gameContainer.classList.remove("hidden");
 
-    // Create buttons for the game
     createButtons(words);
 }
 
 function resetGame() {
-    // Clear the buttons container before creating new buttons
     elements.buttonsContainer.innerHTML = "";
     correctCount = 0;
     mistakesCount = 0;
-    colorIndex = 0;
+    score = 0;
+    startTime = null;
 
-    // Reset the score display
     elements.correctDisplay.textContent = "0";
     elements.mistakesDisplay.textContent = "0";
-
-    // Generate buttons based on the current difficulty level
-    const words = currentDifficulty === "easy" ? wordsEasy : wordsHard;
-    createButtons(words);
+    elements.scoreDisplay.textContent = "0";
+    elements.timeDisplay.textContent = "0";
 }
 
 function createButtons(words) {
-    // Clear the container to prevent duplicate buttons
     elements.buttonsContainer.innerHTML = "";
 
-    // Shuffle the words and generate buttons
     const mixedWords = shuffle(
         [...words.map(w => ({ text: w.english, match: w.english })), 
         ...words.map(w => ({ text: w.arabic, match: w.english }))],
     );
 
-    // Add buttons to the container
     mixedWords.forEach(word => {
         const button = document.createElement("button");
         button.textContent = word.text;

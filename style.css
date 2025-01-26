@@ -53,11 +53,13 @@ button:hover {
 button.wrong {
     background-color: red !important;
     color: white;
+    animation: shake 0.5s;
 }
 
 button.correct {
     background-color: #4CAF50 !important;
     color: white;
+    animation: fade-out 1s forwards;
 }
 
 .main-button {
@@ -77,4 +79,17 @@ button.correct {
 
 #score {
     margin-top: 20px;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+
+@keyframes fade-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
 }
