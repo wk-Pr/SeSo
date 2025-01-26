@@ -89,31 +89,26 @@ function checkMatch() {
 
     if (btn1.dataset.match === btn2.dataset.match) {
         correctCount++;
-        btn1.style.backgroundColor = colors[colorIndex];
-        btn2.style.backgroundColor = colors[colorIndex];
-        colorIndex = (colorIndex + 1) % colors.length;
+        btn1.classList.add("correct");
+        btn2.classList.add("correct");
     } else {
         mistakesCount++;
-        btn1.style.backgroundColor = "red";
-        btn2.style.backgroundColor = "red";
+        btn1.classList.add("wrong");
+        btn2.classList.add("wrong");
 
-        // אחרי 2 שניות מחזיר את המילים למצב ההתחלתי
         setTimeout(() => {
-            btn1.style.backgroundColor = "";
-            btn2.style.backgroundColor = "";
+            btn1.classList.remove("wrong");
+            btn2.classList.remove("wrong");
             btn1.disabled = false; // מאפשר לבחור מחדש
             btn2.disabled = false; // מאפשר לבחור מחדש
         }, 2000);
     }
 
-    // עדכון התצוגה של מספר הנקודות והשגיאות
     elements.correctDisplay.textContent = correctCount;
     elements.mistakesDisplay.textContent = mistakesCount;
 
-    // איפוס הבחירה
     selected = [];
 
-    // אם כל המילים תואמות - המשחק מסתיים
     if (correctCount === wordsEasy.length) {
         endGame();
     }

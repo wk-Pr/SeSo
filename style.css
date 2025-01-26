@@ -37,6 +37,16 @@ button:hover {
     background-color: #e0e0e0;
 }
 
+button.wrong {
+    background-color: red !important;
+    color: white;
+}
+
+button.correct {
+    background-color: #4CAF50 !important;
+    color: white;
+}
+
 .main-button {
     padding: 10px 20px;
     font-size: 18px;
