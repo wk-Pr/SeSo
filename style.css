@@ -81,6 +81,17 @@ button.correct {
     margin-top: 20px;
 }
 
+#score p {
+    margin: 5px 0;
+    font-size: 18px;
+    color: #333;
+}
+
+#score strong {
+    font-weight: bold;
+}
+
+
 @keyframes shake {
     0% { transform: translateX(0); }
     25% { transform: translateX(-5px); }

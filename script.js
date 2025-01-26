@@ -47,8 +47,6 @@ let colorIndex = 0;
 let startTime = null; // To track when the game started
 let currentDifficulty = "easy";
 
-const colors = ["#4CAF50", "#FF9800", "#2196F3", "#9C27B0"];
-
 const elements = {
     menu: document.getElementById("menu"),
     gameContainer: document.getElementById("game-container"),
@@ -81,7 +79,7 @@ function checkMatch() {
 
     if (btn1.dataset.match === btn2.dataset.match) {
         correctCount++;
-        score += selected.length === 2 && score > 0 ? 15 : 10;
+        score += 15;
         btn1.classList.add("correct");
         btn2.classList.add("correct");
     } else {
@@ -116,13 +114,13 @@ function endGame() {
     const totalTime = Math.floor((endTime - startTime) / 1000); // Time in seconds
 
     alert(`🎉 Well Done! Score: ${score}, Mistakes: ${mistakesCount}, Time Taken: ${totalTime} seconds`);
+    resetGame();
     exitToMenu();
 }
 
 function startGame() {
     resetGame();
 
-    // Record the start time
     startTime = new Date();
 
     currentDifficulty = elements.difficultySelect.value;
@@ -139,8 +137,6 @@ function resetGame() {
     correctCount = 0;
     mistakesCount = 0;
     score = 0;
-    startTime = null;
-
     elements.correctDisplay.textContent = "0";
     elements.mistakesDisplay.textContent = "0";
     elements.scoreDisplay.textContent = "0";
@@ -172,5 +168,5 @@ function exitToMenu() {
 
 // Event listeners
 elements.startButton.addEventListener("click", startGame);
-elements.restartButton.addEventListener("click", resetGame);
+elements.restartButton.addEventListener("click", startGame);
 elements.exitButton.addEventListener("click", exitToMenu);
