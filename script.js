@@ -43,9 +43,11 @@ let selected = [];
 let correctCount = 0;
 let mistakesCount = 0;
 let score = 0;
-let colorIndex = 0;
-let startTime = null; // To track when the game started
+let colorIndex = 0; // To cycle through colors for correct pairs
+let startTime = null;
 let currentDifficulty = "easy";
+
+const colors = ["#4CAF50", "#FF9800", "#2196F3", "#9C27B0"];
 
 const elements = {
     menu: document.getElementById("menu"),
@@ -80,11 +82,20 @@ function checkMatch() {
     if (btn1.dataset.match === btn2.dataset.match) {
         correctCount++;
         score += 15;
-        btn1.classList.add("correct");
-        btn2.classList.add("correct");
+
+        const currentColor = colors[colorIndex % colors.length];
+        colorIndex++;
+
+        btn1.style.backgroundColor = currentColor;
+        btn2.style.backgroundColor = currentColor;
+        btn1.style.color = "white";
+        btn2.style.color = "white";
+        btn1.disabled = true;
+        btn2.disabled = true;
     } else {
         mistakesCount++;
         score -= 5;
+
         btn1.classList.add("wrong");
         btn2.classList.add("wrong");
 
@@ -93,7 +104,7 @@ function checkMatch() {
             btn2.classList.remove("wrong");
             btn1.disabled = false;
             btn2.disabled = false;
-        }, 2000);
+        }, 1000);
     }
 
     elements.correctDisplay.textContent = correctCount;
@@ -111,10 +122,9 @@ function checkMatch() {
 
 function endGame() {
     const endTime = new Date();
-    const totalTime = Math.floor((endTime - startTime) / 1000); // Time in seconds
+    const totalTime = Math.floor((endTime - startTime) / 1000);
 
     alert(`🎉 Well Done! Score: ${score}, Mistakes: ${mistakesCount}, Time Taken: ${totalTime} seconds`);
-    resetGame();
     exitToMenu();
 }
 
@@ -137,6 +147,8 @@ function resetGame() {
     correctCount = 0;
     mistakesCount = 0;
     score = 0;
+    colorIndex = 0;
+
     elements.correctDisplay.textContent = "0";
     elements.mistakesDisplay.textContent = "0";
     elements.scoreDisplay.textContent = "0";
@@ -148,7 +160,7 @@ function createButtons(words) {
 
     const mixedWords = shuffle(
         [...words.map(w => ({ text: w.english, match: w.english })), 
-        ...words.map(w => ({ text: w.arabic, match: w.english }))],
+        ...words.map(w => ({ text: w.arabic, match: w.english }))]
     );
 
     mixedWords.forEach(word => {
