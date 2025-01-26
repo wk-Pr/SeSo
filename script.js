@@ -95,18 +95,38 @@ function updateScore() {
 
 function startGame() {
     resetGame();
+
     const gameMode = document.getElementById("game-mode").value;
+
+    if (!gameMode) {
+        alert("Please select a game mode.");
+        return;
+    }
 
     elements.menu.classList.add("hidden");
     elements.gameContainer.classList.remove("hidden");
 
-    if (gameMode === "matching") startMatchingGame();
-    else if (gameMode === "say-the-word") startSayTheWordGame();
-    else if (gameMode === "repeat-after-me") startRepeatAfterMeGame();
-    else if (gameMode === "fill-in-the-blank") startFillInTheBlankGame();
-    else if (gameMode === "build-the-sentence") startBuildTheSentenceGame();
-    else alert("Game mode not implemented yet!");
+    switch (gameMode) {
+        case "matching":
+            startMatchingGame();
+            break;
+        case "say-the-word":
+            startSayTheWordGame();
+            break;
+        case "repeat-after-me":
+            startRepeatAfterMeGame();
+            break;
+        case "fill-in-the-blank":
+            startFillInTheBlankGame();
+            break;
+        case "build-the-sentence":
+            startBuildTheSentenceGame();
+            break;
+        default:
+            alert("Invalid game mode selected!");
+    }
 }
+
 
 function startMatchingGame() {
     const difficulty = document.getElementById("difficulty").value;
@@ -152,11 +172,11 @@ function handleMatchClick(button) {
 }
 
 function startSayTheWordGame() {
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
     const word = getRandomWord();
 
     elements.gameArea.innerHTML = `<p class="game-word">Say this word: <strong>${word.english}</strong></p>`;
 
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
     recognition.start();
 
     recognition.onresult = (event) => {
@@ -166,11 +186,12 @@ function startSayTheWordGame() {
             alert("Correct!");
         } else {
             mistakesCount++;
-            alert(`Incorrect! The word was: ${word.english}`);
+            alert(`Incorrect! The correct word was "${word.english}"`);
         }
         updateScore();
     };
 }
+
 
 
 function startRepeatAfterMeGame() {
@@ -235,8 +256,9 @@ function updateDescription() {
         "build-the-sentence": "Arrange words to form a correct sentence. (رتب الكلمات لتكوين جملة صحيحة)"
     };
 
-    descriptionElement.textContent = descriptions[gameMode] || "Select a game mode to see its description.";
+    descriptionElement.innerHTML = `<p>${descriptions[gameMode]}</p>`;
 }
+
 
 
 function getRandomWord() {
@@ -245,7 +267,9 @@ function getRandomWord() {
     return words[Math.floor(Math.random() * words.length)];
 }
 
-elements.startButton.addEventListener("click", startGame);
+elements.startButton.addEventListener("click", () => {
+    startGame();
+});
 elements.restartButton.addEventListener("click", startGame);
 elements.exitButton.addEventListener("click", () => {
     elements.menu.classList.remove("hidden");
