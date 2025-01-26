@@ -134,12 +134,25 @@ function endGame() {
 }
 
 function startGame() {
+    const gameMode = document.getElementById("game-mode").value;
     resetGame();
 
-    startTime = new Date();
+    if (gameMode === "matching") {
+        startMatchingGame();
+    } else if (gameMode === "say-the-word") {
+        startSayTheWordGame();
+    } else if (gameMode === "repeat-after-me") {
+        startRepeatAfterMeGame();
+    } else if (gameMode === "fill-in-the-blank") {
+        startFillInTheBlankGame();
+    } else if (gameMode === "build-the-sentence") {
+        startBuildTheSentenceGame();
+    }
+}
 
-    currentDifficulty = elements.difficultySelect.value;
-    const words = currentDifficulty === "easy" ? wordsEasy : wordsHard;
+function startMatchingGame() {
+    const difficulty = elements.difficultySelect.value;
+    const words = difficulty === "easy" ? wordsEasy : wordsHard;
 
     elements.menu.classList.add("hidden");
     elements.gameContainer.classList.remove("hidden");
@@ -147,6 +160,48 @@ function startGame() {
     createButtons(words);
 }
 
+function startSayTheWordGame() {
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    const wordToSpeak = "Apple";
+
+    recognition.onstart = () => alert(`Say the word: "${wordToSpeak}"`);
+    recognition.onresult = (event) => {
+        const userSpeech = event.results[0][0].transcript.toLowerCase();
+        alert(userSpeech === wordToSpeak.toLowerCase() ? "Correct!" : `Wrong! The word is "${wordToSpeak}"`);
+    };
+
+    recognition.start();
+}
+
+function startRepeatAfterMeGame() {
+    const wordToSpeak = "Banana";
+    const utterance = new SpeechSynthesisUtterance(wordToSpeak);
+    utterance.onend = () => startSayTheWordGame();
+    speechSynthesis.speak(utterance);
+}
+
+function startFillInTheBlankGame() {
+    const word = "A_ple";
+    const missingLetter = "p";
+    const userInput = prompt(`Complete the word: ${word}`);
+
+    if (userInput === missingLetter) {
+        alert("Correct!");
+    } else {
+        alert(`Wrong! The correct word is "Apple".`);
+    }
+}
+
+function startBuildTheSentenceGame() {
+    const sentence = "I like apples";
+    const userSentence = prompt("Build the sentence: I ___ apples");
+
+    if (userSentence === "like") {
+        alert("Correct!");
+    } else {
+        alert(`Wrong! The correct sentence is "${sentence}".`);
+    }
+}
 function showLeaderboard() {
     elements.gameContainer.classList.add("hidden");
     const leaderboardBody = document.getElementById("leaderboard-body");
