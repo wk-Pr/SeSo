@@ -94,14 +94,29 @@ function checkMatch() {
         colorIndex = (colorIndex + 1) % colors.length;
     } else {
         mistakesCount++;
-        setTimeout(() => selected.forEach(b => (b.disabled = false)), 1000);
+        btn1.style.backgroundColor = "red";
+        btn2.style.backgroundColor = "red";
+
+        // אחרי 2 שניות מחזיר את המילים למצב ההתחלתי
+        setTimeout(() => {
+            btn1.style.backgroundColor = "";
+            btn2.style.backgroundColor = "";
+            btn1.disabled = false; // מאפשר לבחור מחדש
+            btn2.disabled = false; // מאפשר לבחור מחדש
+        }, 2000);
     }
 
+    // עדכון התצוגה של מספר הנקודות והשגיאות
     elements.correctDisplay.textContent = correctCount;
     elements.mistakesDisplay.textContent = mistakesCount;
 
+    // איפוס הבחירה
     selected = [];
-    if (correctCount === wordsEasy.length) endGame();
+
+    // אם כל המילים תואמות - המשחק מסתיים
+    if (correctCount === wordsEasy.length) {
+        endGame();
+    }
 }
 
 function endGame() {
