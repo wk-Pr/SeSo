@@ -1,5 +1,43 @@
-const wordsEasy = [...]; // שמור את הרשימה המקורית
-const wordsHard = [...]; // שמור את הרשימה המקורית
+const wordsEasy = [
+    { english: "Always", arabic: "دائماً" },
+    { english: "Find", arabic: "يجد" },
+    { english: "Choose", arabic: "يختار" },
+    { english: "Fix", arabic: "يصلِّح" },
+    { english: "Paint", arabic: "يرسم, يدهن" },
+    { english: "Practice", arabic: "يتدرب على" },
+    { english: "Safe", arabic: "آمن" },
+    { english: "Club", arabic: "نادٍ" },
+    { english: "Or", arabic: "أو" },
+    { english: "Problem", arabic: "مشكلة" },
+    { english: "Table Tennis", arabic: "تنس طاولة" },
+    { english: "Use", arabic: "يستعمل" },
+    { english: "Olympic Games", arabic: "الألعاب الأولمبية" },
+    { english: "Was", arabic: "كان" },
+    { english: "Need", arabic: "يحتاج إلى" },
+    { english: "Hard", arabic: "صعب" },
+    { english: "Country", arabic: "دولة" },
+    { english: "Hour", arabic: "ساعة (زمنية)" },
+    { english: "How", arabic: "كيف" },
+    { english: "First", arabic: "أوّل" },
+    { english: "Place", arabic: "مكان" },
+    { english: "Move", arabic: "يتحرك , يحرَك" },
+    { english: "Them", arabic: "إيّاهم , إياهنّ لهم" },
+    { english: "Easy", arabic: "سَهْل" },
+    { english: "Plate", arabic: "صحن" },
+    { english: "Tomorrow", arabic: "غدًا" },
+    { english: "Race", arabic: "سباق" },
+];
+const wordsHard = [
+    { english: "Many", arabic: "كثير" },
+    { english: "Prepare", arabic: "يحضّر, يعدّ" },
+    { english: "Later", arabic: "فيما بعد, لاحقًا" },
+    { english: "Medal", arabic: "مدالية" },
+    { english: "Because", arabic: "لأن" },
+    { english: "Again", arabic: "مرة أخرى" },
+    { english: "(be) called", arabic: "يُدعى" },
+    { english: "Artist", arabic: "فنّان" },
+    { english: "Interesting", arabic: "مثير للاهتمام" },
+];
 
 let selected = [];
 let correctCount = 0;
