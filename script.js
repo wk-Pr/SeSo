@@ -44,6 +44,7 @@ let correctCount = 0;
 let mistakesCount = 0;
 let colorIndex = 0;
 const colors = ["#4CAF50", "#FF9800", "#2196F3", "#9C27B0"];
+let currentDifficulty = "easy";
 
 const elements = {
     menu: document.getElementById("menu"),
@@ -54,6 +55,7 @@ const elements = {
     difficultySelect: document.getElementById("difficulty"),
     startButton: document.getElementById("start-game"),
     restartButton: document.getElementById("restart"),
+    exitButton: document.getElementById("exit"),
 };
 
 function shuffle(array) {
@@ -99,8 +101,8 @@ function checkMatch() {
         setTimeout(() => {
             btn1.classList.remove("wrong");
             btn2.classList.remove("wrong");
-            btn1.disabled = false; // מאפשר לבחור מחדש
-            btn2.disabled = false; // מאפשר לבחור מחדש
+            btn1.disabled = false;
+            btn2.disabled = false;
         }, 2000);
     }
 
@@ -109,7 +111,7 @@ function checkMatch() {
 
     selected = [];
 
-    if (correctCount === wordsEasy.length) {
+    if (correctCount === (currentDifficulty === "easy" ? wordsEasy.length : wordsHard.length)) {
         endGame();
     }
 }
@@ -119,9 +121,9 @@ function endGame() {
 }
 
 function startGame() {
+    currentDifficulty = elements.difficultySelect.value;
     resetGame();
-    const difficulty = elements.difficultySelect.value;
-    const words = difficulty === "easy" ? wordsEasy : wordsHard;
+    const words = currentDifficulty === "easy" ? wordsEasy : wordsHard;
 
     elements.menu.classList.add("hidden");
     elements.gameContainer.classList.remove("hidden");
@@ -136,7 +138,17 @@ function resetGame() {
     colorIndex = 0;
     elements.correctDisplay.textContent = "0";
     elements.mistakesDisplay.textContent = "0";
+
+    const words = currentDifficulty === "easy" ? wordsEasy : wordsHard;
+    createButtons(words);
+}
+
+function exitToMenu() {
+    elements.gameContainer.classList.add("hidden");
+    elements.menu.classList.remove("hidden");
+    resetGame();
 }
 
 elements.startButton.addEventListener("click", startGame);
 elements.restartButton.addEventListener("click", resetGame);
+elements.exitButton.addEventListener("click", exitToMenu);
