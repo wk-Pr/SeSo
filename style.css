@@ -39,6 +39,7 @@ main {
 button {
     padding: 15px;
     font-size: 16px;
+    font-weight: bold; /* Make the text bold */
     border: 2px solid #333;
     border-radius: 5px;
     background-color: #f0f0f0;
@@ -50,18 +51,17 @@ button:hover {
     background-color: #e0e0e0;
 }
 
-button.wrong {
-    background-color: red !important;
-    color: white;
-    animation: shake 0.5s;
-}
-
 button.correct {
     background-color: #4CAF50 !important;
     color: white;
-    animation: fade-out 1s forwards;
+    font-weight: bold; /* Ensure text stays bold */
 }
 
+button.wrong {
+    background-color: red !important;
+    color: white;
+    font-weight: bold; /* Ensure text stays bold */
+}
 .main-button {
     padding: 10px 20px;
     font-size: 18px;
