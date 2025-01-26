@@ -47,13 +47,14 @@ let colorIndex = 0; // To cycle through colors for correct pairs
 let startTime = null;
 let currentDifficulty = "easy";
 let leaderboard = []; // Array to store leaderboard data
+let currentMode = null;
 
 const colors = ["#4CAF50", "#FF9800", "#2196F3", "#9C27B0"];
 
 const elements = {
     menu: document.getElementById("menu"),
     gameContainer: document.getElementById("game-container"),
-    buttonsContainer: document.getElementById("buttons"),
+    gameArea: document.getElementById("game-area"),
     correctDisplay: document.getElementById("correct"),
     mistakesDisplay: document.getElementById("mistakes"),
     scoreDisplay: document.getElementById("score"),
@@ -63,6 +64,13 @@ const elements = {
     restartButton: document.getElementById("restart"),
     exitButton: document.getElementById("exit"),
 };
+
+function updateScore() {
+    score = correctCount * 10 - mistakesCount * 5;
+    elements.correctDisplay.textContent = correctCount;
+    elements.mistakesDisplay.textContent = mistakesCount;
+    elements.scoreDisplay.textContent = score;
+}
 
 function shuffle(array) {
     return array.sort(() => Math.random() - 0.5);
@@ -135,72 +143,86 @@ function endGame() {
 
 function startGame() {
     const gameMode = document.getElementById("game-mode").value;
-    resetGame();
-
-    if (gameMode === "matching") {
-        startMatchingGame();
-    } else if (gameMode === "say-the-word") {
-        startSayTheWordGame();
-    } else if (gameMode === "repeat-after-me") {
-        startRepeatAfterMeGame();
-    } else if (gameMode === "fill-in-the-blank") {
-        startFillInTheBlankGame();
-    } else if (gameMode === "build-the-sentence") {
-        startBuildTheSentenceGame();
-    }
-}
-
-function startMatchingGame() {
     const difficulty = elements.difficultySelect.value;
     const words = difficulty === "easy" ? wordsEasy : wordsHard;
+
+    resetGame();
+    currentMode = gameMode;
 
     elements.menu.classList.add("hidden");
     elements.gameContainer.classList.remove("hidden");
 
-    createButtons(words);
+    if (gameMode === "matching") startMatchingGame(words);
+    else if (gameMode === "say-the-word") startSayTheWordGame(words);
+    else if (gameMode === "repeat-after-me") startRepeatAfterMeGame(words);
+    else if (gameMode === "fill-in-the-blank") startFillInTheBlankGame(words);
+    else if (gameMode === "build-the-sentence") startBuildTheSentenceGame(words);
 }
 
-function startSayTheWordGame() {
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    const wordToSpeak = "Apple";
+function startMatchingGame(words) {
+    const shuffled = shuffle([...words, ...words]);
+    shuffled.forEach(word => {
+        const button = document.createElement("button");
+        button.textContent = word.english || word.arabic;
+        button.addEventListener("click", () => handleMatching(word));
+        elements.gameArea.appendChild(button);
+    });
+}
 
-    recognition.onstart = () => alert(`Say the word: "${wordToSpeak}"`);
-    recognition.onresult = (event) => {
-        const userSpeech = event.results[0][0].transcript.toLowerCase();
-        alert(userSpeech === wordToSpeak.toLowerCase() ? "Correct!" : `Wrong! The word is "${wordToSpeak}"`);
-    };
+function handleMatching(word) {
+    // Logic for matching game
+}
+
+function startSayTheWordGame(words) {
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    const word = words[Math.floor(Math.random() * words.length)].english;
 
     recognition.start();
+    recognition.onresult = (event) => {
+        const speech = event.results[0][0].transcript.toLowerCase();
+        if (speech === word.toLowerCase()) {
+            correctCount++;
+            alert("Correct!");
+        } else {
+            mistakesCount++;
+            alert("Try Again!");
+        }
+        updateScore();
+    };
 }
 
-function startRepeatAfterMeGame() {
-    const wordToSpeak = "Banana";
-    const utterance = new SpeechSynthesisUtterance(wordToSpeak);
-    utterance.onend = () => startSayTheWordGame();
+function startRepeatAfterMeGame(words) {
+    const word = words[Math.floor(Math.random() * words.length)].english;
+    const utterance = new SpeechSynthesisUtterance(word);
     speechSynthesis.speak(utterance);
+    setTimeout(() => startSayTheWordGame(words), 3000);
 }
 
-function startFillInTheBlankGame() {
-    const word = "A_ple";
-    const missingLetter = "p";
-    const userInput = prompt(`Complete the word: ${word}`);
-
-    if (userInput === missingLetter) {
+function startFillInTheBlankGame(words) {
+    const word = words[Math.floor(Math.random() * words.length)].english;
+    const missing = word.replace(/./, "_");
+    const userAnswer = prompt(`Complete the word: ${missing}`);
+    if (userAnswer === word) {
+        correctCount++;
         alert("Correct!");
     } else {
-        alert(`Wrong! The correct word is "Apple".`);
+        mistakesCount++;
+        alert(`Wrong! The correct word is ${word}`);
     }
+    updateScore();
 }
 
-function startBuildTheSentenceGame() {
+function startBuildTheSentenceGame(words) {
     const sentence = "I like apples";
-    const userSentence = prompt("Build the sentence: I ___ apples");
-
-    if (userSentence === "like") {
+    const userAnswer = prompt("Build the sentence: I ___ apples");
+    if (userAnswer === "like") {
+        correctCount++;
         alert("Correct!");
     } else {
-        alert(`Wrong! The correct sentence is "${sentence}".`);
+        mistakesCount++;
+        alert("Wrong!");
     }
+    updateScore();
 }
 function showLeaderboard() {
     elements.gameContainer.classList.add("hidden");
@@ -224,16 +246,16 @@ function showLeaderboard() {
 
 
 function resetGame() {
-    elements.buttonsContainer.innerHTML = "";
+    elements.gameArea.innerHTML = "";
     correctCount = 0;
     mistakesCount = 0;
     score = 0;
-    colorIndex = 0;
+    startTime = new Date();
 
-    elements.correctDisplay.textContent = "0";
-    elements.mistakesDisplay.textContent = "0";
-    elements.scoreDisplay.textContent = "0";
-    elements.timeDisplay.textContent = "0";
+    elements.correctDisplay.textContent = correctCount;
+    elements.mistakesDisplay.textContent = mistakesCount;
+    elements.scoreDisplay.textContent = score;
+    elements.timeDisplay.textContent = 0;
 }
 
 function createButtons(words) {
@@ -263,5 +285,9 @@ function exitToMenu() {
 // Event listeners
 elements.startButton.addEventListener("click", startGame);
 elements.restartButton.addEventListener("click", startGame);
-elements.exitButton.addEventListener("click", exitToMenu);
+elements.exitButton.addEventListener("click", () => {
+    elements.menu.classList.remove("hidden");
+    elements.gameContainer.classList.add("hidden");
+    resetGame();
+});
 document.getElementById("back-to-menu").addEventListener("click", exitToMenu);

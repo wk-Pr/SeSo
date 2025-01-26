@@ -28,18 +28,14 @@ main {
     max-width: 600px;
 }
 
-#buttons {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
+#game-area {
     margin: 20px 0;
 }
 
 button {
     padding: 15px;
     font-size: 16px;
-    font-weight: bold; /* Make the text bold */
+    font-weight: bold;
     border: 2px solid #333;
     border-radius: 5px;
     background-color: #f0f0f0;
@@ -51,26 +47,12 @@ button:hover {
     background-color: #e0e0e0;
 }
 
-button.correct {
-    background-color: #4CAF50 !important;
-    color: white;
-    font-weight: bold; /* Ensure text stays bold */
-}
-
-button.wrong {
-    background-color: red !important;
-    color: white;
-    font-weight: bold; /* Ensure text stays bold */
-}
 .main-button {
-    padding: 10px 20px;
-    font-size: 18px;
+    margin: 10px;
     background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
 }
 
 .main-button:hover {
