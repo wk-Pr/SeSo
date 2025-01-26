@@ -123,17 +123,15 @@ function checkMatch() {
 
 function endGame() {
     const endTime = new Date();
-    const totalTime = Math.floor((endTime - startTime) / 1000); // Time in seconds
+    const totalTime = Math.floor((endTime - startTime) / 1000);
 
     // Add the player's performance to the leaderboard
     leaderboard.push({ score, time: totalTime, mistakes: mistakesCount });
     leaderboard.sort((a, b) => b.score - a.score || a.time - b.time); // Sort by score, then time
 
-    // Display a message and show the leaderboard
     alert(`🎉 Well Done! Score: ${score}, Mistakes: ${mistakesCount}, Time Taken: ${totalTime} seconds`);
     showLeaderboard();
 }
-
 
 function startGame() {
     resetGame();
@@ -168,6 +166,7 @@ function showLeaderboard() {
 
     document.getElementById("leaderboard").classList.remove("hidden");
 }
+
 
 function resetGame() {
     elements.buttonsContainer.innerHTML = "";
