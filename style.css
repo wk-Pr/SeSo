@@ -69,38 +69,35 @@ footer {
     color: #4CAF50;
 }
 
-/* Basic button styling */
+
 button.game-button {
     padding: 10px 20px;
     font-size: 16px;
     margin: 5px;
-    background-color: #4CAF50; /* Default color */
+    background-color: #4CAF50; 
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: all 0.3s ease, transform 0.2s ease;
 }
 
-/* Highlight selected button */
+
 button.game-button.selected {
-    background-color: #FFD700; /* Highlight color */
-    transform: scale(1.1); /* Slight zoom effect */
+    background-color: #FFD700; 
+    transform: scale(1.1); 
 }
 
-/* Correct match styling */
 button.game-button.correct {
-    background-color: #28a745 !important; /* Green for correct */
-    color: white;
+    background-color: #28a745 !important; 
 }
 
-/* Wrong match styling */
+
 button.game-button.wrong {
-    background-color: #dc3545; /* Red for wrong */
-    color: white;
+    background-color: #dc3545; 
 }
 
-/* Hover effect */
+
 button.game-button:hover {
     background-color: #3e8e41;
 }

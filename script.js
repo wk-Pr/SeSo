@@ -60,7 +60,7 @@ let startTime = null;
 let selectedButtons = [];
 let currentDifficulty = "easy";
 let colorIndex = 0;
-const colors = ["#FF5733", "#33FF57", "#3357FF", "#FF33A1", "#A1FF33"]; // Colors for correct pairs
+const colors = ["#FF5733", "#33FF57", "#3357FF", "#FF33A1", "#A1FF33"]; //
 
 function resetGame() {
     correctCount = 0;
@@ -87,6 +87,7 @@ function updateScore() {
     const timeTaken = Math.floor((new Date() - startTime) / 1000);
     elements.timeDisplay.textContent = timeTaken;
 }
+
 
 function updateDescription() {
     const gameMode = document.getElementById("game-mode").value;
@@ -123,21 +124,22 @@ function startMatchingGame() {
 }
 
 function handleMatchClick(button) {
-    if (selectedButtons.length === 2) return; // Prevent more than two selections
+    if (selectedButtons.length === 2) return; //
 
-    button.classList.add("selected"); // Highlight the selected button
-    selectedButtons.push(button);
+    if (!selectedButtons.includes(button)) {
+        button.classList.add("selected"); //
+        selectedButtons.push(button);
+    }
 
     if (selectedButtons.length === 2) {
         const [btn1, btn2] = selectedButtons;
 
-        // Check if the two buttons match
         if (btn1.dataset.match === btn2.dataset.match) {
             correctCount++;
             const currentColor = colors[colorIndex % colors.length];
             colorIndex++;
 
-            // Set correct pair color
+            // 
             btn1.style.backgroundColor = currentColor;
             btn2.style.backgroundColor = currentColor;
             btn1.style.color = "white";
@@ -149,22 +151,25 @@ function handleMatchClick(button) {
         } else {
             mistakesCount++;
 
-            // Show wrong color briefly
+            // 
             btn1.classList.add("wrong");
             btn2.classList.add("wrong");
 
             setTimeout(() => {
                 btn1.classList.remove("wrong", "selected");
                 btn2.classList.remove("wrong", "selected");
+                btn1.style.backgroundColor = ""; // 
+                btn2.style.backgroundColor = ""; // 
                 btn1.disabled = false;
                 btn2.disabled = false;
             }, 1000);
         }
 
-        selectedButtons = []; // Reset selection
-        updateScore(); // Update the score
+        selectedButtons = []; // 
+        updateScore(); //
     }
 }
+
 
 function startSayTheWordGame() {
     const word = getRandomWord();
