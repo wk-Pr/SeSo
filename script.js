@@ -173,21 +173,48 @@ function handleMatchClick(button) {
 
 function startSayTheWordGame() {
     const word = getRandomWord();
-    elements.gameArea.innerHTML = `<p class="game-word">Say this word: <strong>${word.english}</strong></p>`;
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    const translation = word.arabic;
+
+    elements.gameArea.innerHTML = `
+        <p class="game-word">Say this word: <strong>${word.english}</strong></p>
+        <p class="game-translation">Translation: <strong>${translation}</strong></p>
+    `;
+
+    const utterance = new SpeechSynthesisUtterance(word.english);
+    utterance.lang = "en-US";
+    speechSynthesis.speak(utterance);
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        alert("Speech Recognition is not supported in this browser. Please try another browser.");
+        return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+
     recognition.start();
+
     recognition.onresult = (event) => {
         const userSpeech = event.results[0][0].transcript.toLowerCase();
         if (userSpeech === word.english.toLowerCase()) {
             correctCount++;
-            alert("Correct!");
+            alert("✅ Correct! Well done!");
         } else {
             mistakesCount++;
-            alert(`Incorrect! The correct word was "${word.english}".`);
+            alert(`❌ Incorrect! The correct word was: "${word.english}".`);
         }
         updateScore();
+
+        setTimeout(startSayTheWordGame, 2000);
+    };
+
+    recognition.onerror = (error) => {
+        alert("⚠️ Error with microphone or recognition. Please try again.");
+        console.error("Recognition error:", error);
     };
 }
+
 
 function startRepeatAfterMeGame() {
     const word = getRandomWord();
