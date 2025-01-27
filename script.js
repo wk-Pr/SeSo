@@ -175,9 +175,15 @@ function startSayTheWordGame() {
     const word = getRandomWord();
     const translation = word.arabic;
 
+    // Display the word and its translation
     elements.gameArea.innerHTML = `
         <p class="game-word">Say this word: <strong>${word.english}</strong></p>
         <p class="game-translation">Translation: <strong>${translation}</strong></p>
+        <div id="wave-container">
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+        </div>
     `;
 
     const utterance = new SpeechSynthesisUtterance(word.english);
@@ -193,27 +199,47 @@ function startSayTheWordGame() {
     const recognition = new SpeechRecognition();
     recognition.lang = "en-US";
 
+    // Show wave animation when the microphone is active
+    const waveContainer = document.getElementById("wave-container");
+    waveContainer.classList.add("listening");
+
     recognition.start();
 
+    recognition.onstart = () => {
+        waveContainer.classList.add("listening");
+    };
+
+    recognition.onend = () => {
+        waveContainer.classList.remove("listening");
+    };
+
     recognition.onresult = (event) => {
-        const userSpeech = event.results[0][0].transcript.toLowerCase();
-        if (userSpeech === word.english.toLowerCase()) {
+        const userSpeech = event.results[0][0].transcript.toLowerCase().trim();
+        const correctWord = word.english.toLowerCase().trim();
+
+        if (normalizeString(userSpeech) === normalizeString(correctWord)) {
             correctCount++;
             alert("✅ Correct! Well done!");
         } else {
             mistakesCount++;
             alert(`❌ Incorrect! The correct word was: "${word.english}".`);
         }
-        updateScore();
 
+        updateScore();
         setTimeout(startSayTheWordGame, 2000);
     };
 
     recognition.onerror = (error) => {
         alert("⚠️ Error with microphone or recognition. Please try again.");
+        waveContainer.classList.remove("listening");
         console.error("Recognition error:", error);
     };
 }
+
+function normalizeString(input) {
+    return input.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+}
+
 
 
 function startRepeatAfterMeGame() {
