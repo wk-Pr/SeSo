@@ -175,43 +175,54 @@ function startSayTheWordGame() {
     const word = getRandomWord();
     const translation = word.arabic;
 
-    // Display the word and its translation
+    // Display the word, translation, and controls
     elements.gameArea.innerHTML = `
         <p class="game-word">Say this word: <strong>${word.english}</strong></p>
         <p class="game-translation">Translation: <strong>${translation}</strong></p>
         <div id="wave-container">
-            <div class="wave"></div>
-            <div class="wave"></div>
-            <div class="wave"></div>
+            <canvas id="waveform"></canvas>
         </div>
+        <button id="repeat-word" class="game-control-button">🔁 Repeat Word</button>
+        <button id="skip-word" class="game-control-button">⏩ Skip</button>
     `;
 
     const utterance = new SpeechSynthesisUtterance(word.english);
     utterance.lang = "en-US";
+
+    // Repeat word functionality
+    document.getElementById("repeat-word").addEventListener("click", () => {
+        speechSynthesis.speak(utterance);
+    });
+
+    // Skip word functionality
+    document.getElementById("skip-word").addEventListener("click", () => {
+        mistakesCount++;
+        updateScore();
+        startSayTheWordGame();
+    });
+
     speechSynthesis.speak(utterance);
 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        alert("Speech Recognition is not supported in this browser. Please try another browser.");
-        return;
-    }
-
-    const recognition = new SpeechRecognition();
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
     recognition.lang = "en-US";
 
-    // Show wave animation when the microphone is active
-    const waveContainer = document.getElementById("wave-container");
-    waveContainer.classList.add("listening");
+    // Waveform setup
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const analyser = audioContext.createAnalyser();
+    analyser.fftSize = 2048;
+    const waveCanvas = document.getElementById("waveform");
+    const canvasContext = waveCanvas.getContext("2d");
+    waveCanvas.width = 300;
+    waveCanvas.height = 100;
+
+    // Access microphone
+    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+        const source = audioContext.createMediaStreamSource(stream);
+        source.connect(analyser);
+        visualizeWave(analyser, canvasContext, waveCanvas);
+    });
 
     recognition.start();
-
-    recognition.onstart = () => {
-        waveContainer.classList.add("listening");
-    };
-
-    recognition.onend = () => {
-        waveContainer.classList.remove("listening");
-    };
 
     recognition.onresult = (event) => {
         const userSpeech = event.results[0][0].transcript.toLowerCase().trim();
@@ -219,21 +230,66 @@ function startSayTheWordGame() {
 
         if (normalizeString(userSpeech) === normalizeString(correctWord)) {
             correctCount++;
-            alert("✅ Correct! Well done!");
+            showFeedback(true, `✅ Correct! The word is "${word.english}".`);
         } else {
             mistakesCount++;
-            alert(`❌ Incorrect! The correct word was: "${word.english}".`);
+            showFeedback(false, `❌ Incorrect! The correct word was "${word.english}".`);
         }
 
         updateScore();
-        setTimeout(startSayTheWordGame, 2000);
+        setTimeout(startSayTheWordGame, 3000); // Move to the next word after 3 seconds
     };
 
     recognition.onerror = (error) => {
         alert("⚠️ Error with microphone or recognition. Please try again.");
-        waveContainer.classList.remove("listening");
         console.error("Recognition error:", error);
     };
+}
+
+function visualizeWave(analyser, canvasContext, waveCanvas) {
+    const bufferLength = analyser.fftSize;
+    const dataArray = new Uint8Array(bufferLength);
+
+    function draw() {
+        requestAnimationFrame(draw);
+
+        analyser.getByteTimeDomainData(dataArray);
+        canvasContext.fillStyle = "#f3f3f3";
+        canvasContext.fillRect(0, 0, waveCanvas.width, waveCanvas.height);
+
+        canvasContext.lineWidth = 2;
+        canvasContext.strokeStyle = "#4caf50";
+        canvasContext.beginPath();
+
+        const sliceWidth = waveCanvas.width / bufferLength;
+        let x = 0;
+
+        for (let i = 0; i < bufferLength; i++) {
+            const v = dataArray[i] / 128.0;
+            const y = (v * waveCanvas.height) / 2;
+
+            if (i === 0) canvasContext.moveTo(x, y);
+            else canvasContext.lineTo(x, y);
+
+            x += sliceWidth;
+        }
+
+        canvasContext.lineTo(waveCanvas.width, waveCanvas.height / 2);
+        canvasContext.stroke();
+    }
+
+    draw();
+}
+
+function showFeedback(isCorrect, message) {
+    const feedback = document.createElement("div");
+    feedback.className = `feedback ${isCorrect ? "correct" : "incorrect"}`;
+    feedback.textContent = message;
+    elements.gameArea.appendChild(feedback);
+
+    setTimeout(() => {
+        feedback.remove();
+    }, 2000);
 }
 
 function normalizeString(input) {

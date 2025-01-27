@@ -135,13 +135,52 @@ button:hover {
     }
 }
 
+/* Waveform container */
 #wave-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
+    text-align: center;
     margin-top: 20px;
 }
+
+#waveform {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Feedback */
+.feedback {
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px;
+    margin-top: 20px;
+    border-radius: 5px;
+}
+
+.feedback.correct {
+    color: #4caf50;
+    background-color: #e8f5e9;
+}
+
+.feedback.incorrect {
+    color: #f44336;
+    background-color: #ffebee;
+}
+
+/* Game control buttons */
+.game-control-button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4caf50;
+    color: white;
+    cursor: pointer;
+}
+
+.game-control-button:hover {
+    background-color: #45a049;
+}
+
 
 .wave {
     width: 10px;
