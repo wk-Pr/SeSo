@@ -59,6 +59,8 @@ let score = 0;
 let startTime = null;
 let selectedButtons = [];
 let currentDifficulty = "easy";
+let colorIndex = 0;
+const colors = ["#FF5733", "#33FF57", "#3357FF", "#FF33A1", "#A1FF33"];
 
 function resetGame() {
     correctCount = 0;
@@ -66,6 +68,7 @@ function resetGame() {
     score = 0;
     selectedButtons = [];
     startTime = new Date();
+    colorIndex = 0;
 
     elements.correctDisplay.textContent = "0";
     elements.mistakesDisplay.textContent = "0";
@@ -75,6 +78,15 @@ function resetGame() {
     elements.gameArea.innerHTML = "";
 }
 
+function updateScore() {
+    score = correctCount * 10 - mistakesCount * 5;
+    elements.correctDisplay.textContent = correctCount;
+    elements.mistakesDisplay.textContent = mistakesCount;
+    elements.scoreDisplay.textContent = score;
+
+    const timeTaken = Math.floor((new Date() - startTime) / 1000);
+    elements.timeDisplay.textContent = timeTaken;
+}
 
 function updateDescription() {
     const gameMode = document.getElementById("game-mode").value;
@@ -93,7 +105,6 @@ function startMatchingGame() {
     const difficulty = document.getElementById("difficulty").value;
     const words = difficulty === "easy" ? wordsEasy : wordsHard;
 
-    // Create shuffled array of words (English and Arabic pairs)
     const mixedWords = shuffle(
         [...words.map(w => ({ text: w.english, match: w.english })), 
          ...words.map(w => ({ text: w.arabic, match: w.english }))]
@@ -109,6 +120,7 @@ function startMatchingGame() {
         elements.gameArea.appendChild(button);
     });
 }
+
 function handleMatchClick(button) {
     if (selectedButtons.length === 2) return;
 
@@ -120,8 +132,13 @@ function handleMatchClick(button) {
 
         if (btn1.dataset.match === btn2.dataset.match) {
             correctCount++;
-            btn1.classList.add("correct");
-            btn2.classList.add("correct");
+            const currentColor = colors[colorIndex % colors.length];
+            colorIndex++;
+
+            btn1.style.backgroundColor = currentColor;
+            btn2.style.backgroundColor = currentColor;
+            btn1.style.color = "white";
+            btn2.style.color = "white";
         } else {
             mistakesCount++;
             btn1.classList.add("wrong");
@@ -138,6 +155,7 @@ function handleMatchClick(button) {
         updateScore();
     }
 }
+
 function startSayTheWordGame() {
     const word = getRandomWord();
     elements.gameArea.innerHTML = `<p class="game-word">Say this word: <strong>${word.english}</strong></p>`;
@@ -177,11 +195,18 @@ function startBuildTheSentenceGame() {
 
 function startSpeechGame() {
     const word = getRandomWord();
+    const translation = word.arabic;
 
-    elements.gameArea.innerHTML = `<p class="game-word">Say this word: <strong>${word.english}</strong></p>`;
+    elements.gameArea.innerHTML = `
+        <p class="game-word">Say this word: <strong>${word.english}</strong></p>
+        <p class="game-translation">Translation: ${translation}</p>
+    `;
+
+    const utterance = new SpeechSynthesisUtterance(word.english);
+    speechSynthesis.speak(utterance);
 
     const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = "en-US"; // Ensure English recognition
+    recognition.lang = "en-US";
     recognition.start();
 
     recognition.onresult = (event) => {
@@ -212,15 +237,6 @@ function getRandomWord() {
     return words[Math.floor(Math.random() * words.length)];
 }
 
-function updateScore() {
-    score = correctCount * 10 - mistakesCount * 5;
-    elements.correctDisplay.textContent = correctCount;
-    elements.mistakesDisplay.textContent = mistakesCount;
-    elements.scoreDisplay.textContent = score;
-
-    const timeTaken = Math.floor((new Date() - startTime) / 1000);
-    elements.timeDisplay.textContent = timeTaken;
-}
 
 elements.startButton.addEventListener("click", () => {
     resetGame();

@@ -70,27 +70,31 @@ footer {
 }
 
 button {
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
+    padding: 10px 15px;
     margin: 5px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
     cursor: pointer;
     background-color: #4CAF50;
     color: white;
+    transition: all 0.3s ease;
 }
 
 button.correct {
-    background-color: #28a745;
+    background-color: #28a745 !important;
+    color: white;
 }
 
 button.wrong {
     background-color: #dc3545;
+    color: white;
 }
 
 button:hover {
-    background-color: #45a049;
+    background-color: #3e8e41;
 }
+
 @media screen and (max-width: 600px) {
     button {
         font-size: 14px;
