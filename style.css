@@ -69,17 +69,42 @@ footer {
     color: #4CAF50;
 }
 
-button {
-    padding: 10px 15px;
-    margin: 5px;
+/* Basic button styling */
+button.game-button {
+    padding: 10px 20px;
     font-size: 16px;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    background-color: #4CAF50;
+    margin: 5px;
+    background-color: #4CAF50; /* Default color */
     color: white;
-    transition: all 0.3s ease;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
+
+/* Highlight selected button */
+button.game-button.selected {
+    background-color: #FFD700; /* Highlight color */
+    transform: scale(1.1); /* Slight zoom effect */
+}
+
+/* Correct match styling */
+button.game-button.correct {
+    background-color: #28a745 !important; /* Green for correct */
+    color: white;
+}
+
+/* Wrong match styling */
+button.game-button.wrong {
+    background-color: #dc3545; /* Red for wrong */
+    color: white;
+}
+
+/* Hover effect */
+button.game-button:hover {
+    background-color: #3e8e41;
+}
+
 
 button.correct {
     background-color: #28a745 !important;

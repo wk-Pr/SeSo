@@ -60,7 +60,7 @@ let startTime = null;
 let selectedButtons = [];
 let currentDifficulty = "easy";
 let colorIndex = 0;
-const colors = ["#FF5733", "#33FF57", "#3357FF", "#FF33A1", "#A1FF33"];
+const colors = ["#FF5733", "#33FF57", "#3357FF", "#FF33A1", "#A1FF33"]; // Colors for correct pairs
 
 function resetGame() {
     correctCount = 0;
@@ -116,43 +116,53 @@ function startMatchingGame() {
         const button = document.createElement("button");
         button.textContent = word.text;
         button.dataset.match = word.match;
+        button.classList.add("game-button");
         button.addEventListener("click", () => handleMatchClick(button));
         elements.gameArea.appendChild(button);
     });
 }
 
 function handleMatchClick(button) {
-    if (selectedButtons.length === 2) return;
+    if (selectedButtons.length === 2) return; // Prevent more than two selections
 
-    button.disabled = true;
+    button.classList.add("selected"); // Highlight the selected button
     selectedButtons.push(button);
 
     if (selectedButtons.length === 2) {
         const [btn1, btn2] = selectedButtons;
 
+        // Check if the two buttons match
         if (btn1.dataset.match === btn2.dataset.match) {
             correctCount++;
             const currentColor = colors[colorIndex % colors.length];
             colorIndex++;
 
+            // Set correct pair color
             btn1.style.backgroundColor = currentColor;
             btn2.style.backgroundColor = currentColor;
             btn1.style.color = "white";
             btn2.style.color = "white";
+            btn1.classList.remove("selected");
+            btn2.classList.remove("selected");
+            btn1.disabled = true;
+            btn2.disabled = true;
         } else {
             mistakesCount++;
+
+            // Show wrong color briefly
             btn1.classList.add("wrong");
             btn2.classList.add("wrong");
 
             setTimeout(() => {
-                btn1.classList.remove("wrong");
-                btn2.classList.remove("wrong");
+                btn1.classList.remove("wrong", "selected");
+                btn2.classList.remove("wrong", "selected");
                 btn1.disabled = false;
                 btn2.disabled = false;
             }, 1000);
         }
-        selectedButtons = [];
-        updateScore();
+
+        selectedButtons = []; // Reset selection
+        updateScore(); // Update the score
     }
 }
 
